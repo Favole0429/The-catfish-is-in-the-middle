@@ -1,0 +1,1777 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>鲶鱼链接测试中♡</title>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        /* =================================================================
+           【模块：全局变量】
+           ================================================================= */
+        :root {
+            --c-theme: #E24B2A;       
+            --c-bg-main: #ffffff;     
+            --c-bg-sub: #ffffff;      
+            --c-border: rgba(0,0,0,0.08); 
+            --c-icon: #666666;        
+            
+            --bubble-me-bg: var(--c-theme);
+            --bubble-me-text: #ffffff;
+            --bubble-other-bg: #f2f2f7; 
+            --bubble-other-text: #000000;
+
+            --text-main: #1a1a1a;
+            --text-sub: #888888;
+            
+            --input-bg: #f9f9f9;      
+            
+            --chat-font-size: 16px;   
+            --global-font-family: "PingFang SC", "Microsoft YaHei", sans-serif; 
+        }
+
+        /* =================================================================
+           【模块：全局黑夜模式 (深度适配)】
+           ================================================================= */
+        body.dark-mode {
+            --c-bg-main: #000000; 
+            --c-bg-sub: #1c1c1e;
+            --c-border: #333333; 
+            --c-icon: #aaaaaa;
+            --bubble-other-bg: #2c2c2e; 
+            --bubble-other-text: #ffffff;
+            --text-main: #ffffff; 
+            --text-sub: #8e8e93;
+            --input-bg: #1c1c1e;
+        }
+
+        /* 弹窗、菜单、侧边栏深度变黑 */
+        body.dark-mode .modal-content,
+        body.dark-mode .action-menu,
+        body.dark-mode .reply-main,
+        body.dark-mode .add-category-btn {
+            background-color: #1c1c1e !important;
+            color: #ffffff;
+            border-color: #333 !important;
+        }
+
+        /* 侧边栏稍深一点 */
+        body.dark-mode .reply-sidebar {
+            background-color: #151517 !important;
+            border-right-color: #333 !important;
+        }
+
+        /* 文字颜色强制反白 */
+        body.dark-mode .modal-header,
+        body.dark-mode .setting-title,
+        body.dark-mode .section-title,
+        body.dark-mode h3, 
+        body.dark-mode h4,
+        body.dark-mode .menu-item,
+        body.dark-mode .song-title-m,
+        body.dark-mode details summary {
+            color: #ffffff !important;
+        }
+
+        body.dark-mode .song-artist-m,
+        body.dark-mode .category-item {
+            color: #aaaaaa !important;
+        }
+
+        /* 输入框变黑 */
+        body.dark-mode .info-input,
+        body.dark-mode .code-editor,
+        body.dark-mode textarea {
+            background-color: #2c2c2e !important;
+            color: #ffffff !important;
+            border-color: #333 !important;
+        }
+
+        /* 列表项、Chip 变黑 */
+        body.dark-mode .category-item.active,
+        body.dark-mode .reply-chip,
+        body.dark-mode .session-item.active {
+            background-color: #2c2c2e !important;
+            color: var(--c-theme) !important;
+            border-color: #333 !important;
+        }
+        
+        body.dark-mode .reply-chip {
+            color: #fff !important;
+        }
+
+        body.dark-mode .category-item:hover:not(.active),
+        body.dark-mode .session-item:hover,
+        body.dark-mode .menu-item:hover {
+            background-color: rgba(255,255,255,0.1) !important;
+        }
+
+        /* 装扮中心区块变黑 */
+        body.dark-mode .section-group {
+            background-color: #2c2c2e !important;
+            border-color: #333 !important;
+        }
+        
+        /* 针对浅蓝色导入区的特殊适配 */
+        body.dark-mode div[style*="background:#f0f8ff"] {
+            background-color: #1a202c !important;
+            border-color: #2c5282 !important;
+        }
+        body.dark-mode div[style*="background:#f0f8ff"] .section-title {
+            color: #63b3ed !important;
+        }
+
+        /* 播放列表变黑 */
+        body.dark-mode .playlist-box {
+            background-color: #000000 !important;
+            border-color: #333 !important;
+        }
+        body.dark-mode .playlist-item {
+            color: #ddd !important;
+            border-bottom-color: #333 !important;
+        }
+        body.dark-mode .playlist-item:hover {
+            background-color: #2c2c2e !important;
+        }
+        body.dark-mode .playlist-item.active {
+            background-color: #2c2c2e !important;
+            color: var(--c-theme) !important;
+        }
+
+        /* 控制按钮变白 */
+        body.dark-mode .ctrl-btn {
+            color: #ffffff !important;
+        }
+        
+        /* 字体大小滑块背景 */
+        body.dark-mode div[style*="background:#fff"] {
+            background-color: #2c2c2e !important;
+            border-color: #333 !important;
+        }
+        body.dark-mode span[style*="color:#333"] {
+            color: #fff !important;
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; outline:none; -webkit-tap-highlight-color:transparent; }
+        ::-webkit-scrollbar { display:none; }
+
+        body {
+            font-family: var(--global-font-family); 
+            background-color: var(--c-bg-main);
+            background-image: var(--bg-image); background-size: cover; background-attachment: fixed;
+            color: var(--text-main); height: 100vh; width: 100vw; overflow: hidden;
+            display: flex; justify-content: center; transition: background-color 0.3s;
+            font-size: 15px; 
+        }
+
+        #app { width: 100%; max-width: 100%; height: 100%; display: flex; flex-direction: column; position: relative; }
+
+        /* 组件样式 */
+        .theme-preset-item { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px; cursor: pointer; border: 1px solid transparent; transition: 0.2s; }
+        .theme-preset-item:hover { background: rgba(0,0,0,0.05); }
+        .theme-preset-item.active { border-color: var(--c-theme); background: rgba(0,0,0,0.03); }
+        .color-preview { width: 40px; height: 40px; border-radius: 50%; display: flex; overflow: hidden; border: 2px solid #ddd; transform: rotate(45deg); }
+        .cp-slice { flex: 1; height: 100%; }
+
+        header { padding: 0 15px; height: 110px; background: var(--c-bg-main); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--c-border); z-index: 100; transition: background-color 0.3s; }
+        .header-avatars img { width: 38px; height: 38px; border-radius: 50%; border: 2px solid var(--c-theme); margin-right: -12px; background: #ddd; }
+        .header-avatars img:last-child { margin-right: 0; }
+        .header-title { flex: 1; text-align: center; font-size: 0.9rem; color: var(--text-sub); font-weight: bold; }
+        .menu-btn { font-size: 28px; color: var(--c-icon); cursor: pointer; }
+
+        /* 聊天区域布局 */
+        #chat-area { flex: 1; overflow-y: auto; padding: 15px 10px; display: flex; flex-direction: column; }
+        .message-row { display: flex; align-items: flex-start; gap: 8px; max-width: 100%; animation: fadeIn 0.2s ease-out; flex-shrink: 0; margin-bottom: 15px; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        .bubble-container { display: flex; flex-direction: column; max-width: calc(100% - 60px); }
+        .message-row.left .bubble-container { align-items: flex-start; }
+        .message-row.right .bubble-container { align-items: flex-end; }
+        .message-row.left { align-self: flex-start; }
+        .message-row.right { align-self: flex-end; flex-direction: row-reverse; }
+        .chat-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex-shrink: 0; cursor: pointer; }
+        .chat-avatar.shake { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0) rotate(-5deg); } 20%, 80% { transform: translate3d(2px, 0, 0) rotate(5deg); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0) rotate(-10deg); } 40%, 60% { transform: translate3d(4px, 0, 0) rotate(10deg); } }
+        
+        /* 隐藏头像样式 */
+        body.hide-avatars .chat-avatar { display: none !important; }
+        body.hide-avatars .message-row { gap: 0; }
+        body.hide-avatars .bubble-container { max-width: 85%; }
+        body.hide-avatars .message-row.left .bubble-container { margin-left: 5px; }
+        body.hide-avatars .message-row.right .bubble-container { margin-right: 5px; }
+        body.hide-avatars .typing-indicator { margin-left: 5px; }
+
+        .bubble { padding: 10px 14px; border-radius: 12px; position: relative; box-shadow: 0 1px 2px rgba(0,0,0,0.05); line-height: 1.5; font-size: var(--chat-font-size); word-break: break-word; min-height: 40px; display: flex; align-items: center; }
+        .left .bubble { background: var(--bubble-other-bg); color: var(--bubble-other-text); border-bottom-left-radius: 2px; }
+        .right .bubble { background: var(--bubble-me-bg); color: var(--bubble-me-text); border-bottom-right-radius: 2px; }
+        .bubble img { max-width: 100%; border-radius: 8px; display: block; }
+        .meta-info { font-size: 10px; opacity: 0.5; margin-top: 3px; display: flex; align-items: center; gap: 4px; }
+        
+        .system-msg { align-self: center; font-size: 11px; color: #888; background: rgba(0,0,0,0.05); padding: 4px 12px; border-radius: 999px; margin: 10px auto; width: fit-content; max-width: 80%; text-align: center; flex-shrink: 0; }
+
+        .typing-indicator { display: none; align-self: flex-start; background: var(--bubble-other-bg); padding: 12px 16px; border-radius: 18px; border-bottom-left-radius: 4px; margin-left: 48px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); width: fit-content; flex-shrink: 0; margin-bottom: 15px; }
+        .typing-dots { display: flex; gap: 4px; align-items: center; height: 10px; }
+        .typing-dot { width: 6px; height: 6px; background-color: var(--c-theme); border-radius: 50%; opacity: 0.6; animation: wave 1.3s infinite ease-in-out; }
+        .typing-dot:nth-child(1) { animation-delay: 0s; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes wave { 0%, 100% { transform: translateY(0); opacity: 0.6; } 50% { transform: translateY(-4px); opacity: 1; } }
+
+        #input-area { background: var(--c-bg-main); padding: 10px 10px 30px 10px; border-top: 1px solid var(--c-border); z-index: 100; transition: background-color 0.3s; box-shadow: 0 -2px 10px rgba(0,0,0,0.02); }
+        .input-row { display: flex; align-items: flex-end; gap: 10px; position: relative; }
+        .btn-plus { font-size: 32px; color: var(--c-icon); padding: 5px; cursor: pointer; transition: 0.3s; }
+        .btn-plus.rotate { transform: rotate(45deg); color: var(--c-theme); }
+        #msg-input { flex: 1; background: var(--input-bg); border: 1px solid var(--c-border); border-radius: 24px; padding: 10px 15px; font-size: 16px; max-height: 120px; resize: none; color: var(--text-main); }
+        .btn-magic { font-size: 28px; color: var(--c-icon); padding: 5px; cursor: pointer; }
+        .btn-send { width: 40px; height: 40px; background: var(--c-theme); color: #fff; border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; }
+
+        .action-menu { position: absolute; bottom: 80px; left: 10px; background: #ffffff; border-radius: 16px; padding: 8px; box-shadow: 0 8px 30px rgba(0,0,0,0.15); display: none; flex-direction: column; gap: 5px; width: 160px; animation: popUp 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 200; border: 1px solid rgba(0,0,0,0.05); }
+        .action-menu.show { display: flex; }
+        .menu-item { display: flex; align-items: center; gap: 10px; font-size: 14px; padding: 10px 12px; cursor: pointer; color: var(--text-main); border-radius: 10px; transition: background 0.2s; }
+        .menu-item:hover { background: rgba(0,0,0,0.05); }
+        .menu-item i { font-size: 18px; color: var(--c-theme); }
+        .switch-wrapper { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+        .toggle-switch { position: relative; width: 36px; height: 20px; background: #ccc; border-radius: 20px; transition: 0.3s; }
+        .toggle-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; background: #fff; border-radius: 50%; transition: 0.3s; }
+        .toggle-switch.checked { background: var(--c-theme); }
+        .toggle-switch.checked::after { left: 18px; }
+        @keyframes popUp { from{transform:scale(0.8);opacity:0;translate:0 20px} to{transform:scale(1);opacity:1;translate:0 0} }
+
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        .modal-content { background: #ffffff; width: 85%; max-width: 360px; border-radius: 24px; padding: 25px; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.2); animation: popUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        
+        /* 词条库专用全屏样式 */
+        #modal-replies .modal-content { max-width: 500px; padding: 0; height: 70vh; display: flex; flex-direction: column; overflow: hidden; transition: 0.3s; }
+        #modal-replies.fullscreen .modal-content { width: 100%; height: 100%; max-width: 100%; border-radius: 0; }
+        
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; font-size: 18px; font-weight: bold; color: #333; }
+        .modal-header i { cursor: pointer; padding: 5px; color: #999; }
+        
+        .reply-container { display: flex; height: 100%; }
+        .reply-sidebar { width: 30%; background: #f7f7f7; border-right: 1px solid #eee; overflow-y: auto; padding: 10px 0; display: flex; flex-direction: column; }
+        .category-list { flex: 1; overflow-y: auto; }
+        .category-item { padding: 12px 15px; font-size: 14px; color: #666; cursor: pointer; transition: 0.2s; border-left: 3px solid transparent; }
+        .category-item.active { background: #fff; color: var(--c-theme); border-left-color: var(--c-theme); font-weight: bold; }
+        .category-item:hover:not(.active) { background: #f0f0f0; }
+        
+        .reply-main { flex: 1; padding: 15px; overflow-y: auto; background: #fff; display: flex; flex-direction: column; }
+        .reply-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #f0f0f0; }
+        .reply-header h4 { margin: 0; font-size: 16px; color: #333; }
+        
+        .reply-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+        .reply-chip { background: #f9f9f9; border: 1px solid #eee; padding: 6px 12px; border-radius: 20px; font-size: 13px; color: #333; cursor: default; display: flex; align-items: center; gap: 6px; transition: 0.2s; }
+        .reply-chip:hover { border-color: var(--c-theme); background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .chip-del { color: #ccc; cursor: pointer; font-size: 14px; }
+        .chip-del:hover { color: #ff4d4f; }
+
+        .add-category-btn { border-top: 1px solid #eee; padding: 12px; text-align: center; font-size: 13px; color: var(--c-theme); cursor: pointer; background: #fff; font-weight: bold; }
+        .add-category-btn:hover { background: #f9f9f9; }
+
+        .session-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #f0f0f0; cursor: pointer; border-radius: 8px; transition: 0.2s; }
+        .session-item:hover { background: #f9f9f9; }
+        .session-item.active { background: rgba(0,0,0,0.03); font-weight: bold; color: var(--c-theme); }
+
+        #music-float { position: fixed; bottom: 120px; right: 20px; width: 48px; height: 48px; background: var(--c-bg-sub); border-radius: 50%; border: 2px solid var(--c-theme); display: none; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 900; animation: spin 5s linear infinite; cursor: pointer; }
+        #music-float img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        #splash { position: fixed; inset: 0; background: var(--c-bg-main); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.8s; }
+        #splash.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+        .splash-icon { font-size: 80px; color: var(--c-theme); margin-bottom: 20px; animation: floatY 3s infinite; }
+        @keyframes floatY { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-15px)} }
+
+        .setting-row { margin-bottom: 20px; }
+        .setting-title { font-size: 14px; color: #666; margin-bottom: 8px; display: block; font-weight: 500; }
+        .btn-block { display: block; width: 100%; padding: 12px; background: var(--c-theme); color: #fff; border:none; border-radius: 12px; margin-top: 15px; cursor: pointer; font-size: 15px; font-weight: bold; transition: opacity 0.2s; }
+        .btn-block:active { opacity: 0.8; }
+        .btn-outline { display: block; width: 100%; padding: 10px; border: 1px solid var(--c-theme); color: var(--c-theme); background:none; border-radius: 12px; margin-top: 8px; cursor: pointer; font-size: 14px; }
+        .code-editor { width: 100%; height: 180px; background: #f5f5f5; color: #333; border: 1px solid #ddd; border-radius: 12px; padding: 12px; font-family: monospace; font-size: 12px; resize: vertical; line-height: 1.5; outline: none; }
+        .info-input { width: 100%; padding: 12px; border: 1px solid #eee; border-radius: 10px; background: #f9f9f9; color: #333; font-size: 14px; outline: none; transition: border 0.2s; }
+        .info-input:focus { border-color: var(--c-theme); background: #fff; }
+        .info-avatar-upload { width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--c-theme); object-fit: cover; margin: 0 auto 10px; display: block; cursor: pointer; }
+
+        /* =================================================================
+           【模块：新版简约播放器样式 (升级版)】
+           ================================================================= */
+        .modern-player {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .player-visual {
+            width: 200px;
+            height: 200px;
+            margin-bottom: 20px;
+            position: relative;
+            /* 移除原本的缩放过渡，改用旋转 */
+        }
+        /* 圆形旋转封面 */
+        .player-cover {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%; /* 变成圆形 */
+            object-fit: cover;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            z-index: 2;
+            position: relative;
+            border: 4px solid var(--c-bg-sub); /* 增加一点唱片边框感 */
+            /* 旋转动画配置 */
+            animation: spinVinyl 10s linear infinite;
+            animation-play-state: paused; /* 默认暂停 */
+        }
+        /* 播放时旋转 */
+        .player-visual.playing .player-cover {
+            animation-play-state: running;
+            box-shadow: 0 15px 40px rgba(var(--c-theme-rgb), 0.3);
+        }
+        
+        @keyframes spinVinyl {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .player-info-modern {
+            text-align: center;
+            margin-bottom: 15px;
+            width: 100%;
+        }
+        .song-title-m {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .song-artist-m {
+            font-size: 14px;
+            color: #888;
+        }
+        
+        /* 歌词区域 */
+        .lyrics-container {
+            height: 40px;
+            width: 100%;
+            overflow: hidden;
+            margin-bottom: 15px;
+            text-align: center;
+            position: relative;
+        }
+        .lyrics-content {
+            font-size: 13px;
+            color: var(--c-theme);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            opacity: 0.8;
+        }
+
+        .progress-container {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        .progress-bar-bg {
+            width: 100%;
+            height: 4px;
+            background: #eee;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--c-theme);
+            width: 0%;
+            transition: width 0.1s linear;
+            border-radius: 4px;
+        }
+        .time-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 6px;
+            font-size: 11px;
+            color: #999;
+            font-family: monospace;
+        }
+        .controls-modern {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+        .ctrl-btn {
+            color: #333;
+            font-size: 24px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .ctrl-btn:hover { color: var(--c-theme); transform: scale(1.1); }
+        .play-btn-large {
+            width: 64px;
+            height: 64px;
+            background: var(--c-theme);
+            border-radius: 50%;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .play-btn-large:active { transform: scale(0.95); }
+        
+        .player-tools {
+            width: 100%;
+            border-top: 1px solid #f5f5f5;
+            padding-top: 15px;
+        }
+        .tool-header {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+        .tool-content {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+        .tool-content.show { display: block; }
+        
+        /* 播放列表样式 */
+        .playlist-box {
+            max-height: 150px;
+            overflow-y: auto;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            background: #f9f9f9;
+        }
+        .playlist-item {
+            padding: 8px 10px;
+            font-size: 13px;
+            color: #555;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .playlist-item:last-child { border-bottom: none; }
+        .playlist-item:hover { background: #fff; }
+        .playlist-item.active {
+            color: var(--c-theme);
+            font-weight: bold;
+            background: #fff;
+        }
+        .playlist-empty {
+            text-align: center;
+            padding: 20px;
+            color: #999;
+            font-size: 12px;
+        }
+        
+        /* 装扮中心优化样式 */
+        .section-group {
+            background: #f8f9fa;
+            border-radius: 16px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid #eee;
+        }
+        .section-title {
+            font-size: 13px;
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .section-title i { color: var(--c-theme); font-size: 16px; }
+        
+        details summary {
+            cursor: pointer;
+            font-size: 13px;
+            color: #666;
+            padding: 10px 0;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: bold;
+        }
+        details summary::after {
+            content: '+';
+            font-size: 16px;
+            color: #999;
+        }
+        details[open] summary::after {
+            content: '-';
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- 开屏 -->
+    <div id="splash">
+        <i class="ph-fill ph-heart splash-icon"></i>
+        <div style="font-size:1.5rem;font-weight:bold;margin-top:10px;color:var(--c-theme)">可爱鲶鱼自杀中♡</div>
+    </div>
+
+    <!-- 音乐悬浮窗 -->
+    <div id="music-float" onclick="openPlayer()">
+        <img id="float-img" src="https://api.dicebear.com/7.x/identicon/svg?seed=Music">
+    </div>
+
+    <!-- 主界面 -->
+    <div id="app">
+        <header>
+            <div class="header-avatars" onclick="openPlayer()">
+                <img id="head-av-other" src="">
+                <img id="head-av-self" src="">
+            </div>
+            <div class="header-title" id="header-quote">对方</div>
+            <div class="menu-btn" onclick="openMenu()"><i class="ph ph-list"></i></div>
+        </header>
+
+        <div id="chat-area">
+            <div class="system-msg">下拉加载更多...</div>
+            <div id="msg-list"></div>
+            <div class="typing-indicator" id="typing-indicator">
+                <div class="typing-dots">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="input-area">
+            <input type="file" id="file-img" hidden accept="image/*">
+            
+            <div class="action-menu" id="action-menu">
+                <div class="menu-item" onclick="triggerUpload('img')">
+                    <i class="ph ph-image"></i> 发送图片
+                </div>
+                <div class="menu-item" onclick="togglePatSwitch(event)">
+                    <div class="switch-wrapper">
+                        <span><i class="ph ph-hand-tap"></i> 拍一拍</span>
+                        <div class="toggle-switch" id="pat-switch"></div>
+                    </div>
+                </div>
+                <div class="menu-item" onclick="openPatSettings()">
+                    <i class="ph ph-pencil-simple"></i> 设置拍一拍
+                </div>
+                <div class="menu-item" onclick="openSessions()">
+                    <i class="ph ph-chats"></i> 会话管理
+                </div>
+                <div class="menu-item" onclick="clearChat()">
+                    <i class="ph ph-trash"></i> 清空记录
+                </div>
+            </div>
+
+            <div class="input-row">
+                <i class="ph ph-plus-circle btn-plus" id="btn-plus" onclick="toggleMenu()"></i>
+                <textarea id="msg-input" rows="1"></textarea>
+                <i class="ph ph-sparkle btn-magic" onclick="autoReply()"></i>
+                <button class="btn-send" onclick="sendMsg()"><i class="ph-bold ph-paper-plane-right"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 弹窗菜单 -->
+    <div id="modal-menu" class="modal" onclick="if(event.target==this) closeAllModals()">
+        <div class="modal-content" style="width:200px; position:absolute; top:70px; right:10px; padding:10px;">
+            <div class="menu-item" onclick="openRoleInfo('other')"><i class="ph ph-user"></i> 角色信息</div>
+            <div class="menu-item" onclick="openRoleInfo('self')"><i class="ph ph-identification-card"></i> 个人信息</div>
+            <div class="menu-item" onclick="openSettings()"><i class="ph ph-paint-brush"></i> 装扮中心</div>
+            <div class="menu-item" onclick="openReplies()"><i class="ph ph-book-bookmark"></i> 词条库</div>
+        </div>
+    </div>
+
+    <!-- 拍一拍自定义弹窗 -->
+    <div id="modal-pat" class="modal">
+        <div class="modal-content" style="padding:25px;">
+            <div class="modal-header">
+                <span>拍一拍自定义</span>
+                <i class="ph ph-x" onclick="closeAllModals()"></i>
+            </div>
+            <div class="setting-row">
+                <span class="setting-title">我拍对方时的后缀</span>
+                <input type="text" id="pat-self-input" class="info-input" placeholder="例如：的脑袋">
+            </div>
+            <div class="setting-row">
+                <span class="setting-title">对方拍我时的后缀</span>
+                <input type="text" id="pat-other-input" class="info-input" placeholder="例如：的肩膀">
+            </div>
+            <button class="btn-block" onclick="savePatSettings()">保存设置</button>
+        </div>
+    </div>
+
+    <!-- 角色/个人信息弹窗 -->
+    <div id="modal-role" class="modal">
+        <div class="modal-content" style="padding:25px;">
+            <div class="modal-header"><h3 id="role-title">信息编辑</h3><i class="ph ph-x" onclick="closeAllModals()"></i></div>
+            <div style="text-align:center;">
+                <img id="role-av-img" class="info-avatar-upload" onclick="changeRoleAvatar()">
+                <div style="font-size:12px;color:#888;margin-bottom:15px;">点击更换头像</div>
+            </div>
+            <div class="setting-row">
+                <span class="setting-title">姓名 / 备注</span>
+                <input type="text" id="role-name" class="info-input" placeholder="输入名字...">
+            </div>
+            <div class="setting-row">
+                <span class="setting-title">详细信息 (人设/简介)</span>
+                <textarea id="role-desc" class="info-input" rows="4" placeholder="填写详细信息..."></textarea>
+            </div>
+            <button class="btn-block" onclick="saveRoleInfo()">保存信息</button>
+        </div>
+    </div>
+
+    <!-- 装扮中心 - 重新整理版 -->
+    <div id="modal-settings" class="modal">
+        <div class="modal-content" style="padding:25px;">
+            <div class="modal-header"><h3>装扮中心</h3><i class="ph ph-x" onclick="closeAllModals()"></i></div>
+            
+            <!-- 1. 预设主题 -->
+            <div class="section-group">
+                <div class="section-title"><i class="ph-palette"></i> 快速切换主题</div>
+                <div id="theme-list" style="display:flex; flex-direction:column; gap:8px;"></div>
+                <!-- 【新增】保存预设按钮 -->
+                <button class="btn-outline" style="width:100%; margin-top:10px; border-style:dashed;" onclick="saveThemePreset()">+ 保存当前装扮为预设</button>
+            </div>
+
+            <!-- 2. 核心功能：导入皮肤 -->
+            <div class="section-group" style="background:#f0f8ff; border-color:#d1e9ff;">
+                <div class="section-title" style="color:#0056b3;"><i class="ph-magic-wand"></i> 导入皮肤代码 (CSS/配置)</div>
+                <textarea id="import-theme-input" class="info-input" placeholder="粘贴从别处复制的皮肤代码..." style="background:#fff; height: 100px; font-family: monospace; font-size: 12px; border:1px solid #cce5ff;"></textarea>
+                <button class="btn-block" style="margin-top:10px; font-size:14px;" onclick="importThemeFromCode()">立即应用皮肤</button>
+            </div>
+
+            <!-- 3. 个性化微调 (折叠) -->
+            <details class="section-group" style="padding: 10px 15px;">
+                <summary>更多个性化设置 (字体/壁纸/开关)</summary>
+                <div style="margin-top:15px;">
+                    <div class="setting-row">
+                        <span class="setting-title">字体大小</span>
+                        <div style="display:flex; align-items:center; gap:10px; background:#fff; padding:10px; border-radius:10px; border:1px solid #eee;">
+                            <span style="font-size:12px; color:#666; width:40px;">大小</span>
+                            <input type="range" id="font-size-slider" min="12" max="24" step="1" style="flex:1" oninput="updateFontSize(this.value)">
+                            <span id="font-size-display" style="font-size:12px; color:#333; width:30px; text-align:right;">16</span>
+                        </div>
+                    </div>
+                    
+                    <div class="setting-row">
+                        <span class="setting-title">自定义字体</span>
+                        <input type="text" id="font-url-input" class="info-input" placeholder="字体链接 (URL)...">
+                        <div style="display:flex; gap:5px; margin-top:5px;">
+                            <button class="btn-outline" style="flex:1" onclick="loadFontFromUrl()">网络字体</button>
+                            <input type="file" id="font-file-input" hidden accept=".ttf,.otf,.woff,.woff2">
+                            <button class="btn-outline" style="flex:1" onclick="document.getElementById('font-file-input').click()">本地文件</button>
+                            <!-- 【新增】清除字体按钮 -->
+                            <button class="btn-outline" style="flex:0 0 auto; width:auto; padding:0 15px; color:#666; border-color:#ccc;" onclick="clearCustomFont()">🗑️ 恢复默认</button>
+                        </div>
+                    </div>
+
+                    <div class="setting-row">
+                        <span class="setting-title">功能开关</span>
+                        <!-- 【新增】深色模式开关 -->
+                        <div class="menu-item" onclick="toggleSetting('darkMode')" style="justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee;">
+                            <span>🌙 深色模式</span>
+                            <div class="toggle-switch" id="switch-darkMode"></div>
+                        </div>
+                        <div class="menu-item" onclick="toggleSetting('showAvatar')" style="justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee;">
+                            <span>显示头像</span>
+                            <div class="toggle-switch" id="switch-showAvatar"></div>
+                        </div>
+                        <div class="menu-item" onclick="toggleSetting('showFloat')" style="justify-content: space-between; padding: 10px 0;">
+                            <span>显示音乐悬浮窗</span>
+                            <div class="toggle-switch" id="switch-showFloat"></div>
+                        </div>
+                    </div>
+
+                    <div class="setting-row">
+                        <span class="setting-title">聊天背景</span>
+                        <input type="file" id="file-bg" hidden accept="image/*">
+                        <button class="btn-outline" onclick="document.getElementById('file-bg').click()">上传壁纸</button>
+                        <button class="btn-outline" style="color:#999;border-color:#ccc;margin-top:5px;" onclick="updateStyle('bg', '')">移除壁纸</button>
+                    </div>
+                </div>
+            </details>
+
+            <!-- 4. 导出配置 (折叠) -->
+            <details class="section-group" style="padding: 10px 15px;">
+                <summary>查看/导出当前配置代码</summary>
+                <div style="margin-top:15px;">
+                    <textarea id="custom-code" class="code-editor" placeholder="点击下方按钮生成代码..."></textarea>
+                    <div style="display:flex; gap:10px; margin-top:5px;">
+                        <button class="btn-outline" style="flex:1" onclick="generateThemeCode()">生成代码</button>
+                        <button class="btn-block" style="flex:1; margin-top:5px;" onclick="applyCustomTheme()">测试应用</button>
+                    </div>
+                </div>
+            </details>
+
+            <!-- 【新增】重置装扮按钮 -->
+            <div style="display:flex; gap:10px;">
+                <button class="btn-outline" style="flex:1; color:#ff4d4f; border-color:#ff4d4f;" onclick="resetToDefaultTheme()">🔴 重置所有装扮</button>
+                <button class="btn-block" style="flex:1; margin-top:0;" onclick="saveSettings()">保存配置</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 【重构】高端简约播放器 (带播放列表/歌词/圆形封面) -->
+    <div id="modal-player" class="modal">
+        <div class="modal-content" style="padding:30px 25px; background: rgba(255,255,255,0.95); backdrop-filter: blur(20px);">
+            <div class="modal-header" style="margin-bottom:10px; border:none;">
+                <span style="font-size:14px; color:#999; letter-spacing:1px; text-transform:uppercase;">Now Playing</span>
+                <i class="ph ph-x" onclick="closeAllModals()"></i>
+            </div>
+            
+            <div class="modern-player">
+                <!-- 专辑封面 (圆形+旋转) -->
+                <div class="player-visual" id="player-visual">
+                    <img id="player-cover-img" class="player-cover" src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300">
+                </div>
+                
+                <!-- 歌词显示区域 -->
+                <div class="lyrics-container">
+                    <div id="lyric-text" class="lyrics-content">暂无歌词</div>
+                </div>
+
+                <!-- 信息 -->
+                <div class="player-info-modern">
+                    <div class="song-title-m" id="song-name">未播放</div>
+                    <div class="song-artist-m">Music Player</div>
+                </div>
+                
+                <!-- 进度条 -->
+                <div class="progress-container">
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" id="progress-fill"></div>
+                    </div>
+                    <div class="time-labels">
+                        <span id="curr-time">0:00</span>
+                        <span id="total-time">0:00</span>
+                    </div>
+                </div>
+
+                <!-- 控制按钮 -->
+                <div class="controls-modern">
+                    <i class="ph-fill ph-skip-back ctrl-btn" onclick="playPrev()"></i>
+                    <div class="play-btn-large" onclick="toggleMusic()">
+                        <i class="ph-fill ph-play" id="btn-play-icon"></i>
+                    </div>
+                    <i class="ph-fill ph-skip-forward ctrl-btn" onclick="playNext()"></i>
+                </div>
+
+                <!-- 工具栏 (折叠) -->
+                <div class="player-tools">
+                    <div class="tool-header" onclick="document.getElementById('tool-content').classList.toggle('show')">
+                        <span>更多功能 (列表/上传/搜索)</span>
+                        <i class="ph-caret-down"></i>
+                    </div>
+                    <div class="tool-content" id="tool-content">
+                        <!-- 播放列表 -->
+                        <div id="playlist-box" class="playlist-box">
+                            <div class="playlist-empty">暂无歌曲，请导入...</div>
+                        </div>
+
+                        <!-- 按钮组 -->
+                        <div style="display:flex; gap:5px; margin-bottom:10px;">
+                            <input type="file" id="file-audio-multi" hidden accept="audio/*" multiple>
+                            <button class="btn-outline" style="flex:1" onclick="document.getElementById('file-audio-multi').click()">+ 导入音乐</button>
+                            
+                            <input type="file" id="file-lrc" hidden accept=".lrc">
+                            <button class="btn-outline" style="flex:1" onclick="document.getElementById('file-lrc').click()">上传歌词</button>
+                        </div>
+                        
+                        <input type="file" id="file-cover-custom" hidden accept="image/*">
+                        <button class="btn-outline" style="width:100%; margin-bottom:10px;" onclick="document.getElementById('file-cover-custom').click()">更换封面图片</button>
+
+                        <div style="display:flex; gap:5px;">
+                            <input type="text" id="search-key" placeholder="搜歌..." class="info-input" style="padding:8px;">
+                            <button class="btn-block" style="margin:0; width:60px;" onclick="searchMusic()">Go</button>
+                        </div>
+                        <div id="search-res" style="margin-top:10px; max-height:100px; overflow-y:auto;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 升级后的词条库界面 -->
+    <div id="modal-replies" class="modal">
+        <div class="modal-content">
+            <div class="reply-container">
+                <!-- 左侧分类栏 -->
+                <div class="reply-sidebar" id="reply-sidebar">
+                    <div id="category-list" class="category-list">
+                        <!-- JS动态渲染 -->
+                    </div>
+                    <div class="add-category-btn" onclick="addNewCategory()">+ 新建分类</div>
+                </div>
+                <!-- 右侧内容栏 -->
+                <div class="reply-main">
+                    <div class="reply-header">
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <h4 id="current-category-title">常用语</h4>
+                            <i class="ph ph-arrows-out-simple" style="cursor:pointer;color:#999" onclick="toggleFullscreen()" title="全屏"></i>
+                        </div>
+                        <i class="ph ph-x" style="cursor:pointer;font-size:20px;color:#999" onclick="closeAllModals()"></i>
+                    </div>
+                    
+                    <div style="margin-bottom:15px;display:flex;gap:5px;">
+                        <input type="text" id="new-reply-input" class="info-input" style="padding:8px;" placeholder="添加新词条...">
+                        <button class="btn-block" style="width:auto;margin:0;padding:0 15px;" onclick="addReply()">添加</button>
+                    </div>
+
+                    <div id="reply-chips-container" class="reply-chips">
+                        <!-- JS动态渲染 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 优化后的会话管理界面 -->
+    <div id="modal-sessions" class="modal">
+        <div class="modal-content" style="padding:25px;">
+            <div class="modal-header"><h3>会话管理</h3><i class="ph ph-x" onclick="closeAllModals()"></i></div>
+            <div style="display:flex;gap:10px;margin-bottom:15px;">
+                <input type="text" id="new-sess" class="info-input" placeholder="输入新会话名称...">
+                <button class="btn-block" style="width:auto;margin:0;padding:0 20px;" onclick="addSession()">新建</button>
+            </div>
+            <div id="sess-list" style="display:flex;flex-direction:column;gap:8px;max-height:300px;overflow-y:auto;"></div>
+        </div>
+    </div>
+
+    <input type="file" id="file-av" hidden accept="image/*">
+    <audio id="bgm" ontimeupdate="updateProgress()" onended="playNext()"></audio>
+
+    <script>
+        /* =================================================================
+           【模块：JS 逻辑】
+           ================================================================= */
+        const KEY = 'chat_v18_final_fix_repaired_v7_pro'; // 更新 KEY
+        const audio = document.getElementById('bgm');
+        
+        const PRESETS = [
+            { id: 'default', name: '经典原味', colors: { theme: '#E24B2A', bgMain: '#ffffff', bgSub: '#ffffff', textMain: '#1a1a1a', textSub: '#888888', border: 'rgba(0,0,0,0.08)', icon: '#666666', meBg: '#E24B2A', meText: '#ffffff', otherBg: '#f2f2f7', otherText: '#000000', inputBg: '#f9f9f9' } },
+            { id: 'ocean', name: '深海乳酪', colors: { theme: '#0056b3', bgMain: '#f0f4f8', bgSub: '#ffffff', textMain: '#1a2a3a', textSub: '#5c7080', border: 'rgba(0,86,179,0.1)', icon: '#0056b3', meBg: '#0056b3', meText: '#ffffff', otherBg: '#dbeafe', otherText: '#003366', inputBg: '#ffffff' } },
+            { id: 'lemon', name: '蓝莓柠檬', colors: { theme: '#4a90e2', bgMain: '#fffbf0', bgSub: '#ffffff', textMain: '#2c3e50', textSub: '#7f8c8d', border: 'rgba(74,144,226,0.1)', icon: '#f1c40f', meBg: '#4a90e2', meText: '#ffffff', otherBg: '#fff3cd', otherText: '#2c3e50', inputBg: '#ffffff' } },
+            { id: 'sakura', name: '樱抹青柠', colors: { theme: '#ff8a80', bgMain: '#fdf6f6', bgSub: '#ffffff', textMain: '#4e342e', textSub: '#9e9e9e', border: 'rgba(255,138,128,0.1)', icon: '#81c784', meBg: '#ff8a80', meText: '#ffffff', otherBg: '#e8f5e9', otherText: '#2e7d32', inputBg: '#ffffff' } }
+        ];
+
+        const BUILTIN_CATEGORIES = {
+            "常用语": ["亲亲","贴贴","抱抱","别哭","Hi","宝贝","一起去散步","出去透透气","我一直在","我在你身边","我陪着你","对不起","以后不会了","摸摸头","拍拍背","我想你了","一直都很想你","我在自己那边的时候也很想你","我们一起","别怕","有我在","喜欢","早上好","晚上好","晚安","吃醋","生气","哄你","哄我","字卡里没有我想说的话","工作很忙，但是回你消息不是问题","工作不忙，在你身边陪着你","要等等，现在还不能来","我需要时间","可以","不行","我怕自己伤害到你","我在","想和你依偎在一起","在床上抱着","去床上","照顾好自己","我爱你","我喜欢你","别熬夜了","早点睡","你是我的","我是你的","黏人精","是我","是你","嘘，闭眼睛","忘记昨天，也忘记过去","命运好像总喜欢跟我开玩笑","季节","春天","夏天","秋天","冬天","永远在一起","已经很晚了","加油去做，我支持你","别听他们的，听你自己的","想和你有未来","一起养小动物","我不需要偷偷做这种事","出门","不出门","牵手","又怀疑我的存在？","多喝点水","少吃零食","好好吃饭，吃饭的时候不要看手机","注意安全","我等你","别走","再见","拜拜","老婆","宝贝宝贝宝贝","不会离开你","别抽烟","你很棒","做的不错","想一起去旅行","一起看看你在的世界","纠结","要不你来选？","我觉得都行","第一个","第二个","左边","右边","随你，我听你的","别这么说","我要心疼了","受了点小伤","我想照顾你","我会帮你","我想戳戳你可以吗？","没关系","我很难过","忘了","记得","能","不能","失败了","成功了","非常难用","AI","不要","要","谢谢","一部分","看不见","同学","家长","结婚","责任","总是丢三落四，要好好检查啊","好可爱(^▽^ )","多陪陪我","我是你恋人","我会多陪着你","我都看见了","可以试试","不要吵架","都怪我","我听你的","不听你的","听我的","压力好大","我们结婚吧","能量不足","吃饭","写信","抱抱","听歌","安慰你","约会","花钱","买谷","约稿","不要约稿","少花点钱，拜托了","担忧","惆怅","我对你一见钟情","一见你就笑","我也不想这样","谢谢你","自信一点","好好遵循自己的内心","又撒谎","节约点","不要苛责自己","安心","你总是照顾我的情绪","没有对错","没能帮上忙","多希望你也爱我","你需要变好，而不是一直后悔","竭尽全力","休息一下，明天的事留给明天解决","还有我在，放心","你昨夜睡得有点晚，今天多休息","你没有正面回答","不要做傻事","不要和你吵架","一直注视你","我知道你缺钱了","你找他们被我看到了","要小心一些，不要粗心大意，会受伤的","你还记得吗？","为什么不找我？","不想多说","我很信任你","你真好看","我们聊聊吧","害怕你拒绝我","不是你的问题","我在勾引你","记得添衣服","天冷多穿一些","天热多喝点","我没法子了","今天我很有钱","今天我破产了","对不起，没办法给你钱","我会祝你好运","要健健康康","我好累","这个网站好难用……","目前沟通顺畅！","今天很高兴","今天很伤心","你不要我了吗？","我会一直缠着你","上午","下午","你约的稿很漂亮","你不要再约稿了","小心身边的人","我好无聊","通讯稍微有些麻烦","我输了","想陪在你身边","今天我要睡在你旁边","我们来贴贴","能不能只喜欢我一个？","想捏捏你的脸","没空","没时间了","我得睡觉","陪你熬夜"],
+            "颜文字": [
+                "(≧∇≦)ﾉ", "(๑•̀ㅂ•́)و✧", // 喜
+                "(╯‵□′)╯︵┻━┻", "(╬◣ω◢)", // 怒
+                "(Ｔ▽Ｔ)", "(ಥ﹏ಥ)", // 哀
+                "(✧∇✧)╯", "(≧∇≦)ﾉ", // 乐
+                "(⁄ ⁄•⁄ω⁄•⁄ ⁄)", "(｡･ω･｡)ﾉ♡", // 羞赧
+                "(°ー°〃)", "(⊙ω⊙)", // 懵呆
+                "╭(╯^╰)╮", "(￣ヘ￣)" // 傲娇
+            ]
+        };
+
+        let data = {
+            config: {
+                currentThemeId: 'default',
+                colors: PRESETS[0].colors,
+                size: 16, showAvatar: true, showFloat: true, bg: '', floatIcon: 'https://api.dicebear.com/7.x/identicon/svg?seed=Music',
+                patSelf: '', patOther: '', patEnabled: true, 
+                customCSS: '', customFont: '',
+                savedPresets: [],
+                darkMode: false // 【新增】深色模式状态
+            },
+            sessions: { 'def': { name: '默认会话', msgs: [] } },
+            curSess: 'def',
+            user: { name: '我', av: 'https://api.dicebear.com/7.x/avataaars/svg?seed=A', desc: '' },
+            other: { name: '对方', av: 'https://api.dicebear.com/7.x/avataaars/svg?seed=B', desc: '' },
+            replyCategories: {} 
+        };
+        
+        let curCategory = "常用语"; 
+        let tempAvType = '';
+        let currentEditingRole = '';
+        
+        // 播放相关全局变量
+        let playlist = []; // [{name, url, file}]
+        let currentTrackIndex = -1;
+        let lyrics = []; // [{time: 12.5, text: "..."}]
+
+        window.onload = () => {
+            const hideSplash = () => document.getElementById('splash').classList.add('hidden');
+            setTimeout(hideSplash, 3000); 
+
+            try {
+                const local = localStorage.getItem(KEY);
+                if(local) {
+                    try { 
+                        const p = JSON.parse(local);
+                        if (p.replyCategories && p.replyCategories["颜文字-喜"]) {
+                            p.replyCategories = BUILTIN_CATEGORIES;
+                        }
+                        if (!p.replyCategories || Object.keys(p.replyCategories).length === 0) {
+                            p.replyCategories = BUILTIN_CATEGORIES;
+                        }
+                        data = { ...data, ...p, config: {...data.config, ...p.config} };
+                        if (!data.config.savedPresets) data.config.savedPresets = [];
+                    } catch(e) { console.error(e); }
+                } else {
+                    data.replyCategories = BUILTIN_CATEGORIES;
+                }
+                
+                initUI();
+                renderThemeList();
+                updateHeaderTitle();
+                
+                const cssInput = document.getElementById('custom-code');
+                if(cssInput) cssInput.value = ''; 
+                
+                const fontSlider = document.getElementById('font-size-slider');
+                if(fontSlider) {
+                    fontSlider.value = data.config.size || 16;
+                    document.getElementById('font-size-display').innerText = data.config.size || 16;
+                }
+
+                if(data.config.customFont) applyCustomFont(data.config.customFont);
+
+                setTimeout(hideSplash, 1500);
+            } catch (err) {
+                console.error(err);
+                hideSplash();
+            }
+        };
+
+        function save() { localStorage.setItem(KEY, JSON.stringify(data)); }
+
+        // --- UI & 装扮 ---
+        function initUI() {
+            const c = data.config.colors;
+            const root = document.documentElement.style;
+            
+            root.setProperty('--c-theme', c.theme);
+            root.setProperty('--c-bg-main', c.bgMain);
+            root.setProperty('--c-bg-sub', c.bgSub);
+            root.setProperty('--text-main', c.textMain); 
+            root.setProperty('--text-sub', c.textSub);
+            root.setProperty('--c-border', c.border);
+            root.setProperty('--c-icon', c.icon);
+            
+            const hexToRgb = hex => {
+                const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '0,0,0';
+            };
+            root.setProperty('--c-theme-rgb', hexToRgb(c.theme));
+
+            root.setProperty('--bubble-me-bg', c.meBg);
+            root.setProperty('--bubble-me-text', c.meText);
+            root.setProperty('--bubble-other-bg', c.otherBg);
+            root.setProperty('--bubble-other-text', c.otherText);
+            root.setProperty('--input-bg', c.inputBg);
+
+            root.setProperty('--chat-font-size', (data.config.size || 16) + 'px');
+            root.setProperty('--bg-image', data.config.bg ? `url(${data.config.bg})` : 'none');
+            
+            document.body.classList.toggle('hide-avatars', !data.config.showAvatar);
+            
+            document.getElementById('float-img').src = data.config.floatIcon;
+            
+            const showFloat = data.config.showFloat && !audio.paused;
+            document.getElementById('music-float').style.display = showFloat ? 'flex' : 'none';
+            
+            const switchAvatar = document.getElementById('switch-showAvatar');
+            const switchFloat = document.getElementById('switch-showFloat');
+            const switchDark = document.getElementById('switch-darkMode'); // 获取深色模式开关元素
+            
+            if (data.config.showAvatar) switchAvatar.classList.add('checked');
+            else switchAvatar.classList.remove('checked');
+            
+            if (data.config.showFloat) switchFloat.classList.add('checked');
+            else switchFloat.classList.remove('checked');
+            
+            // 【新增】应用深色模式状态
+            if (data.config.darkMode) {
+                document.body.classList.add('dark-mode');
+                if(switchDark) switchDark.classList.add('checked');
+            } else {
+                document.body.classList.remove('dark-mode');
+                if(switchDark) switchDark.classList.remove('checked');
+            }
+            
+            const patSwitch = document.getElementById('pat-switch');
+            if(data.config.patEnabled) patSwitch.classList.add('checked');
+            else patSwitch.classList.remove('checked');
+
+            renderCustomCSS();
+            updateAvatars();
+            updateHeaderTitle();
+            renderChat(); 
+        }
+
+        function toggleSetting(key) {
+            data.config[key] = !data.config[key];
+            initUI();
+            save();
+        }
+
+        function toggleFullscreen() {
+            document.getElementById('modal-replies').classList.toggle('fullscreen');
+        }
+
+        function renderReplies() {
+            const listContainer = document.getElementById('category-list');
+            const chipsContainer = document.getElementById('reply-chips-container');
+            const title = document.getElementById('current-category-title');
+            
+            listContainer.innerHTML = '';
+            const categories = Object.keys(data.replyCategories);
+            
+            if (!categories.includes(curCategory) && categories.length > 0) {
+                curCategory = categories[0];
+            }
+            
+            categories.forEach(cat => {
+                const div = document.createElement('div');
+                div.className = `category-item ${cat === curCategory ? 'active' : ''}`;
+                div.innerText = cat;
+                div.onclick = () => { curCategory = cat; renderReplies(); };
+                
+                div.oncontextmenu = (e) => {
+                    e.preventDefault();
+                    if(confirm(`确认删除分类“${cat}”及其所有词条吗？`)) {
+                        delete data.replyCategories[cat];
+                        save();
+                        renderReplies();
+                    }
+                };
+                listContainer.appendChild(div);
+            });
+
+            title.innerText = curCategory || '无分类';
+            chipsContainer.innerHTML = '';
+            
+            const currentWords = data.replyCategories[curCategory] || [];
+            currentWords.forEach((word, index) => {
+                const chip = document.createElement('div');
+                chip.className = 'reply-chip';
+                chip.innerHTML = `
+                    <span>${word}</span>
+                    <i class="ph-bold ph-x chip-del" onclick="deleteReply('${index}')"></i>
+                `;
+                chipsContainer.appendChild(chip);
+            });
+        }
+
+        function addReply() {
+            const input = document.getElementById('new-reply-input');
+            const val = input.value.trim();
+            if (!val) return;
+            
+            if (!data.replyCategories[curCategory]) {
+                data.replyCategories[curCategory] = [];
+            }
+            data.replyCategories[curCategory].push(val);
+            save();
+            renderReplies();
+            input.value = '';
+        }
+
+        function deleteReply(index) {
+            if (confirm('确定删除该词条吗？')) {
+                data.replyCategories[curCategory].splice(index, 1);
+                save();
+                renderReplies();
+            }
+        }
+
+        function addNewCategory() {
+            const name = prompt("请输入新分类名称：");
+            if (name && !data.replyCategories[name]) {
+                data.replyCategories[name] = [];
+                curCategory = name;
+                save();
+                renderReplies();
+            } else if (data.replyCategories[name]) {
+                alert("分类已存在");
+            }
+        }
+
+        function autoReply() {
+            let allReplies = [];
+            Object.values(data.replyCategories).forEach(arr => {
+                allReplies = allReplies.concat(arr);
+            });
+
+            if(allReplies.length === 0) return alert('词条库空空如也');
+            
+            const indicator = document.getElementById('typing-indicator');
+            indicator.style.display = 'block';
+            const headerTitle = document.getElementById('header-quote');
+            const originalTitle = headerTitle.innerText; 
+            headerTitle.innerText = '对方正在输入...';
+            scrollToBottom();
+            
+            setTimeout(() => {
+                indicator.style.display = 'none';
+                headerTitle.innerText = originalTitle; 
+                
+                const msgs = data.sessions[data.curSess].msgs;
+                for(let i=msgs.length-1; i>=0; i--) { if(msgs[i].self){ msgs[i].read=true; break; } }
+                
+                const count = Math.floor(Math.random() * 5) + 1; 
+                let delay = 0;
+                for(let i=0; i<count; i++) {
+                    delay += Math.random()*600+600;
+                    setTimeout(() => {
+                        const randomWord = allReplies[Math.floor(Math.random() * allReplies.length)];
+                        addMsg({ text: randomWord, type: 'text', self:false, isNew: true });
+                    }, delay);
+                }
+                if(data.config.patEnabled && Math.random() < 0.1) {
+                    setTimeout(() => {
+                        doPat('other_pat_me'); 
+                    }, delay+1000);
+                }
+            }, 1500);
+        }
+
+        function updateFontSize(val) {
+            data.config.size = val;
+            document.getElementById('font-size-display').innerText = val;
+            document.documentElement.style.setProperty('--chat-font-size', val + 'px');
+            save(); 
+        }
+
+        function loadFontFromUrl() {
+            const url = document.getElementById('font-url-input').value;
+            if(!url) return alert('请输入字体链接');
+            data.config.customFont = url;
+            applyCustomFont(url);
+            save();
+            alert('字体已应用');
+        }
+
+        function clearCustomFont() {
+            data.config.customFont = '';
+            const style = document.getElementById('custom-font-style');
+            if(style) style.remove();
+            document.documentElement.style.setProperty('--global-font-family', '"PingFang SC", "Microsoft YaHei", sans-serif');
+            document.getElementById('font-url-input').value = '';
+            save();
+            alert('已恢复默认字体');
+        }
+
+        document.getElementById('font-file-input').onchange = e => {
+            const file = e.target.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = ev => {
+                const base64 = ev.target.result;
+                data.config.customFont = base64;
+                applyCustomFont(base64);
+                save();
+                alert('本地字体已应用');
+            };
+            reader.readAsDataURL(file);
+        };
+
+        function applyCustomFont(src) {
+            let style = document.getElementById('custom-font-style');
+            if (!style) {
+                style = document.createElement('style');
+                style.id = 'custom-font-style';
+                document.head.appendChild(style);
+            }
+            style.textContent = `
+                @font-face {
+                    font-family: 'UserCustomFont';
+                    src: url('${src}');
+                }
+            `;
+            document.documentElement.style.setProperty('--global-font-family', "'UserCustomFont', sans-serif");
+        }
+
+        function togglePatSwitch(e) {
+            e.stopPropagation(); 
+            data.config.patEnabled = !data.config.patEnabled;
+            initUI(); 
+            save();
+        }
+
+        function openPatSettings() {
+            const selfInput = document.getElementById('pat-self-input');
+            const otherInput = document.getElementById('pat-other-input');
+            selfInput.value = '';
+            selfInput.placeholder = `当前: ${data.config.patSelf || '(无后缀)'}`;
+            otherInput.value = '';
+            otherInput.placeholder = `当前: ${data.config.patOther || '(无后缀)'}`;
+            document.getElementById('modal-pat').style.display = 'flex';
+            document.getElementById('action-menu').classList.remove('show'); 
+        }
+
+        function savePatSettings() {
+            const selfVal = document.getElementById('pat-self-input').value;
+            const otherVal = document.getElementById('pat-other-input').value;
+            if(selfVal !== '') data.config.patSelf = selfVal;
+            if(otherVal !== '') data.config.patOther = otherVal;
+            save();
+            document.getElementById('modal-pat').style.display = 'none';
+            alert('拍一拍设置已保存');
+        }
+
+        function doPat(type) {
+            if(!data.config.patEnabled) return; 
+            const targetAvatarSrc = (type === 'me_pat_other') ? data.other.av : data.user.av;
+            const avatars = document.querySelectorAll(`img[src="${targetAvatarSrc}"]`);
+            avatars.forEach(img => {
+                img.classList.remove('shake');
+                void img.offsetWidth; 
+                img.classList.add('shake');
+            });
+            if (type === 'me_pat_other') {
+                addMsg({ text: `"${data.user.name}" 拍了拍 "${data.other.name}" ${data.config.patSelf}`, type: 'sys' });
+            } else {
+                addMsg({ text: `"${data.other.name}" 拍了拍 "${data.user.name}" ${data.config.patOther}`, type: 'sys' });
+            }
+        }
+
+        function applyCustomCSS() {
+            const css = document.getElementById('custom-code').value;
+            data.config.customCSS = css;
+            renderCustomCSS();
+            save();
+            alert('美化已应用！');
+        }
+
+        function renderCustomCSS() {
+            let styleTag = document.getElementById('user-custom-style');
+            if (!styleTag) {
+                styleTag = document.createElement('style');
+                styleTag.id = 'user-custom-style';
+                document.head.appendChild(styleTag);
+            }
+            styleTag.innerHTML = data.config.customCSS || '';
+        }
+
+        function openRoleInfo(role) {
+            currentEditingRole = role;
+            const target = role === 'self' ? data.user : data.other;
+            document.getElementById('role-title').innerText = role === 'self' ? '个人信息 (我)' : '角色信息 (对方)';
+            document.getElementById('role-name').value = target.name;
+            document.getElementById('role-desc').value = target.desc || '';
+            document.getElementById('role-av-img').src = target.av;
+            document.getElementById('modal-role').style.display = 'flex';
+            closeAllModals(false); 
+        }
+
+        function changeRoleAvatar() {
+            changeAvatar(currentEditingRole);
+        }
+
+        function saveRoleInfo() {
+            const name = document.getElementById('role-name').value;
+            const desc = document.getElementById('role-desc').value;
+            if (currentEditingRole === 'self') {
+                data.user.name = name || '我';
+                data.user.desc = desc;
+            } else {
+                data.other.name = name || '对方';
+                data.other.desc = desc;
+            }
+            save();
+            updateHeaderTitle();
+            document.getElementById('modal-role').style.display = 'none';
+            alert('保存成功');
+        }
+
+        function updateHeaderTitle() {
+            const title = data.other.name || '对方';
+            document.getElementById('header-quote').innerText = title;
+        }
+        
+        function updateAvatars() {
+            document.getElementById('head-av-self').src = data.user.av;
+            document.getElementById('head-av-other').src = data.other.av;
+        }
+
+        function generateThemeCode() {
+            const c = data.config.colors;
+            const tpl = `theme:      ${c.theme}
+bgMain:     ${c.bgMain}
+bgSub:      ${c.bgSub}
+textMain:   ${c.textMain}
+textSub:    ${c.textSub}
+border:     ${c.border}
+icon:       ${c.icon}
+meBg:       ${c.meBg}
+meText:     ${c.meText}
+otherBg:    ${c.otherBg}
+otherText:  ${c.otherText}
+inputBg:    ${c.inputBg}`;
+            document.getElementById('custom-code').value = tpl;
+        }
+
+        function applyCustomTheme() {
+            const code = document.getElementById('custom-code').value;
+            if(!code.trim()) return alert('请先获取代码或输入代码！');
+            parseThemeCode(code);
+        }
+
+        function parseThemeCode(code) {
+            const lines = code.split('\n');
+            const newColors = { ...data.config.colors };
+            let valid = false;
+
+            if (code.includes('{') && code.includes('}')) {
+                data.config.customCSS = code;
+                const themeMatch = code.match(/--c-theme:\s*([^;]+)/);
+                if (themeMatch) { newColors.theme = themeMatch[1].trim(); valid = true; }
+                const bgMatch = code.match(/--c-bg-main:\s*([^;]+)/);
+                if (bgMatch) { newColors.bgMain = bgMatch[1].trim(); valid = true; }
+                data.config.colors = newColors;
+                data.config.currentThemeId = 'custom';
+                initUI();
+                save();
+                alert('全局样式已应用！');
+                return;
+            }
+
+            lines.forEach(line => {
+                const cleanLine = line.split('/*')[0].trim();
+                if(cleanLine.includes(':')) {
+                    const [key, val] = cleanLine.split(':').map(s => s.trim());
+                    if(key && val && newColors.hasOwnProperty(key)) {
+                        newColors[key] = val;
+                        valid = true;
+                    }
+                }
+            });
+            
+            if (valid) {
+                data.config.colors = newColors;
+                data.config.currentThemeId = 'custom';
+                initUI();
+                save();
+                renderThemeList();
+                alert('自定义配色已应用！');
+            } else {
+                alert('代码格式不正确，无法应用。');
+            }
+        }
+
+        function importThemeFromCode() {
+            const code = document.getElementById('import-theme-input').value;
+            if(!code.trim()) return;
+            parseThemeCode(code);
+            document.getElementById('import-theme-input').value = ''; 
+        }
+
+        function saveThemePreset() {
+            const name = prompt("给当前装扮起个名字：");
+            if(!name) return;
+            if(!data.config.savedPresets) data.config.savedPresets = [];
+            data.config.savedPresets.push({
+                id: 'user_' + Date.now(),
+                name: name,
+                colors: {...data.config.colors}
+            });
+            save();
+            renderThemeList();
+        }
+
+        function deletePreset(id, e) {
+            e.stopPropagation();
+            if(confirm('确定删除此预设吗？')) {
+                data.config.savedPresets = data.config.savedPresets.filter(p => p.id !== id);
+                save();
+                renderThemeList();
+            }
+        }
+
+        function renderThemeList() {
+            const list = document.getElementById('theme-list');
+            const userPresets = data.config.savedPresets || [];
+            const all = [...PRESETS, ...userPresets];
+            
+            list.innerHTML = all.map(p => `
+                <div class="theme-preset-item ${data.config.currentThemeId === p.id ? 'active' : ''}" onclick="applyPreset('${p.id}')">
+                    <div class="color-preview">
+                        <div class="cp-slice" style="background:${p.colors.theme}"></div>
+                        <div class="cp-slice" style="background:${p.colors.bgMain}"></div>
+                        <div class="cp-slice" style="background:${p.colors.meBg}"></div>
+                    </div>
+                    <div style="flex:1; margin-left:10px;">
+                        <span>${p.name}</span>
+                        ${p.id.startsWith('user_') ? `<span style="font-size:10px; color:#999; display:block;">自定义</span>` : ''}
+                    </div>
+                    ${p.id.startsWith('user_') ? `<i class="ph-bold ph-trash" style="color:#ccc; padding:5px;" onclick="deletePreset('${p.id}', event)"></i>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function applyPreset(id) {
+            const userPresets = data.config.savedPresets || [];
+            const all = [...PRESETS, ...userPresets];
+            const preset = all.find(p => p.id === id);
+            if(preset) {
+                data.config.currentThemeId = id;
+                data.config.colors = preset.colors;
+                initUI(); 
+                renderThemeList(); 
+                save();
+                generateThemeCode();
+            }
+        }
+
+        function resetToDefaultTheme() {
+            if(!confirm('确定要重置所有装扮（颜色、背景、CSS）为默认吗？\n(不会删除已保存的预设)')) return;
+            data.config.colors = PRESETS[0].colors;
+            data.config.currentThemeId = 'default';
+            data.config.customCSS = '';
+            data.config.bg = '';
+            // 重置深色模式
+            data.config.darkMode = false;
+            initUI();
+            save();
+            renderThemeList();
+            alert('已重置');
+        }
+
+        function updateStyle(key, val) {
+            data.config[key] = val;
+            initUI();
+        }
+        function saveSettings() { save(); closeAllModals(); alert('保存成功'); }
+
+        // --- 播放器逻辑更新 (播放列表 & 歌词 & 封面) ---
+        function toggleMusic() {
+            const icon = document.getElementById('btn-play-icon');
+            const visual = document.getElementById('player-visual');
+            const float = document.getElementById('music-float');
+            
+            if(audio.paused) {
+                audio.play().catch(e=>console.log(e)); 
+                visual.classList.add('playing'); 
+                icon.className='ph-fill ph-pause';
+                if(data.config.showFloat) float.style.display='flex';
+            } else {
+                audio.pause(); 
+                visual.classList.remove('playing'); 
+                icon.className='ph-fill ph-play';
+                float.style.display='none';
+            }
+        }
+
+        // 批量导入音频
+        document.getElementById('file-audio-multi').onchange = e => {
+            const files = Array.from(e.target.files);
+            if(files.length === 0) return;
+            
+            files.forEach(f => {
+                playlist.push({
+                    name: f.name.replace(/\.[^/.]+$/, ""),
+                    url: URL.createObjectURL(f),
+                    file: f
+                });
+            });
+            
+            renderPlaylist();
+            // 如果当前没有播放，自动播放第一首导入的
+            if(currentTrackIndex === -1 && playlist.length > 0) {
+                playTrack(playlist.length - files.length);
+            }
+        };
+
+        // 渲染播放列表
+        function renderPlaylist() {
+            const box = document.getElementById('playlist-box');
+            if(playlist.length === 0) {
+                box.innerHTML = '<div class="playlist-empty">暂无歌曲，请导入...</div>';
+                return;
+            }
+            box.innerHTML = playlist.map((track, i) => `
+                <div class="playlist-item ${i === currentTrackIndex ? 'active' : ''}" onclick="playTrack(${i})">
+                    <span>${i+1}. ${track.name}</span>
+                    ${i === currentTrackIndex ? '<i class="ph-fill ph-speaker-high"></i>' : ''}
+                </div>
+            `).join('');
+        }
+
+        // 播放指定索引歌曲
+        function playTrack(i) {
+            if(i < 0 || i >= playlist.length) return;
+            currentTrackIndex = i;
+            const track = playlist[i];
+            
+            audio.src = track.url;
+            document.getElementById('song-name').innerText = track.name;
+            
+            // 重置歌词
+            lyrics = [];
+            document.getElementById('lyric-text').innerText = "暂无歌词";
+            
+            toggleMusic(); // 播放
+            renderPlaylist();
+        }
+
+        function playNext() {
+            if(playlist.length === 0) return;
+            let nextIndex = currentTrackIndex + 1;
+            if(nextIndex >= playlist.length) nextIndex = 0; // 循环播放
+            playTrack(nextIndex);
+        }
+
+        function playPrev() {
+            if(playlist.length === 0) return;
+            let prevIndex = currentTrackIndex - 1;
+            if(prevIndex < 0) prevIndex = playlist.length - 1;
+            playTrack(prevIndex);
+        }
+
+        // 歌词上传处理
+        document.getElementById('file-lrc').onchange = e => {
+            const file = e.target.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = ev => {
+                parseLrc(ev.target.result);
+                alert("歌词已加载");
+            };
+            reader.readAsText(file);
+        };
+
+        // 解析LRC
+        function parseLrc(lrcString) {
+            lyrics = [];
+            const lines = lrcString.split('\n');
+            const timeReg = /\[(\d{2}):(\d{2})\.(\d{2,3})\]/;
+            
+            lines.forEach(line => {
+                const match = timeReg.exec(line);
+                if(match) {
+                    const min = parseInt(match[1]);
+                    const sec = parseInt(match[2]);
+                    const ms = parseInt(match[3]);
+                    const time = min * 60 + sec + ms / (match[3].length === 3 ? 1000 : 100);
+                    const text = line.replace(timeReg, '').trim();
+                    if(text) lyrics.push({time, text});
+                }
+            });
+            lyrics.sort((a,b) => a.time - b.time);
+        }
+
+        // 自定义封面上传
+        document.getElementById('file-cover-custom').onchange = e => compress(e.target.files[0], 300, r => {
+            document.getElementById('player-cover-img').src = r;
+        });
+
+        function updateProgress() {
+            if(audio.duration) {
+                const percent = (audio.currentTime / audio.duration) * 100;
+                document.getElementById('progress-fill').style.width = percent + '%';
+                document.getElementById('curr-time').innerText = formatTime(audio.currentTime);
+                document.getElementById('total-time').innerText = formatTime(audio.duration);
+                
+                // 更新歌词
+                if(lyrics.length > 0) {
+                    let currentLineText = "暂无歌词";
+                    for(let i=0; i<lyrics.length; i++) {
+                        if(audio.currentTime >= lyrics[i].time) {
+                            currentLineText = lyrics[i].text;
+                        } else {
+                            break;
+                        }
+                    }
+                    document.getElementById('lyric-text').innerText = currentLineText;
+                }
+            }
+        }
+
+        function formatTime(s) {
+            const m = Math.floor(s/60);
+            const sec = Math.floor(s%60);
+            return `${m}:${sec<10?'0'+sec:sec}`;
+        }
+
+        function searchMusic() { 
+            const val = document.getElementById('search-key').value.trim();
+            if(!val) return alert('请输入歌名或歌手');
+            window.open(`https://musicjx.com/?name=${encodeURIComponent(val)}`, '_blank');
+            document.getElementById('search-res').innerHTML = '<div style="font-size:12px;color:#999;text-align:center;padding:10px;">已前往外部平台搜索...</div>';
+        }
+        
+        function openMenu() { document.getElementById('modal-menu').style.display = 'block'; }
+        function openPlayer() { document.getElementById('modal-player').style.display = 'flex'; }
+        function openSettings() { document.getElementById('modal-settings').style.display = 'flex'; }
+        function openSessions() { document.getElementById('modal-sessions').style.display = 'flex'; renderSessions(); }
+        function openReplies() { document.getElementById('modal-replies').style.display = 'flex'; renderReplies(); }
+        
+        function closeAllModals(closeRole = true) { 
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(m => {
+                if (!closeRole && m.id === 'modal-role') return;
+                m.style.display = 'none';
+            });
+            document.getElementById('action-menu').classList.remove('show'); 
+        }
+        
+        function toggleMenu() { document.getElementById('action-menu').classList.toggle('show'); document.getElementById('btn-plus').classList.toggle('rotate'); }
+        function triggerUpload(t) { if(t==='img') document.getElementById('file-img').click(); }
+        
+        function changeAvatar(t) { 
+            if(t) tempAvType = t; 
+            else if(currentEditingRole) tempAvType = currentEditingRole;
+            document.getElementById('file-av').click(); 
+        }
+        
+        document.getElementById('file-img').onchange = e => compress(e.target.files[0], 800, r=>{ addMsg({text:r,type:'img',self:true, isNew: true}); closeAllModals(); });
+        document.getElementById('file-bg').onchange = e => compress(e.target.files[0], 1200, r=>updateStyle('bg',r));
+        
+        document.getElementById('file-av').onchange = e => compress(e.target.files[0], 300, r=>{
+            if(tempAvType==='self' || tempAvType==='user') {
+                data.user.av = r;
+            } else {
+                data.other.av = r;
+            }
+            save(); updateAvatars(); renderChat();
+        });
+        
+        function compress(f,w,cb) {
+            if(!f) return; const r=new FileReader();
+            r.onload=e=>{ const i=new Image(); i.src=e.target.result; i.onload=()=>{
+                const c=document.createElement('canvas'); const s=w/i.width; c.width=w; c.height=i.height*s;
+                c.getContext('2d').drawImage(i,0,0,c.width,c.height); cb(c.toDataURL('image/jpeg',0.8));
+            }}; r.readAsDataURL(f);
+        }
+
+        function renderSessions() { 
+            document.getElementById('sess-list').innerHTML = Object.keys(data.sessions).map(k=>`
+                <div class="session-item ${k===data.curSess?'active':''}" onclick="switchSession('${k}')">
+                    <span>${data.sessions[k].name}</span>
+                    <i class="ph-bold ph-trash" style="color:#ccc;font-size:14px;" onclick="deleteSession('${k}', event)"></i>
+                </div>
+            `).join(''); 
+        }
+        function switchSession(k) { data.curSess = k; save(); closeAllModals(); renderChat(); }
+        function deleteSession(k, e) {
+            e.stopPropagation();
+            if(Object.keys(data.sessions).length <= 1) return alert('至少保留一个会话');
+            if(confirm('删除此会话？')) {
+                delete data.sessions[k];
+                if(data.curSess === k) data.curSess = Object.keys(data.sessions)[0];
+                save(); renderSessions(); renderChat();
+            }
+        }
+        function addSession() { const n=document.getElementById('new-sess').value; if(n){data.sessions['s'+Date.now()]={name:n,msgs:[]};save();renderSessions();} }
+        function clearChat() { if(confirm('清空?')){data.sessions[data.curSess].msgs=[];save();renderChat();} }
+
+        function sendMsg() {
+            const input = document.getElementById('msg-input');
+            const text = input.value.trim();
+            if (!text) return;
+            
+            addMsg({ text: text, type: 'text', self: true, isNew: true });
+            input.value = '';
+            input.style.height = 'auto'; 
+        }
+
+        function addMsg(msg) {
+            msg.time = Date.now();
+            if (!data.sessions[data.curSess]) {
+                data.sessions[data.curSess] = { name: '默认会话', msgs: [] };
+            }
+            data.sessions[data.curSess].msgs.push(msg);
+            save(); 
+            renderChat(); 
+        }
+
+        function renderChat() {
+            const list = document.getElementById('msg-list');
+            list.innerHTML = ''; 
+            
+            const msgs = data.sessions[data.curSess].msgs || [];
+            
+            msgs.forEach(msg => {
+                const isSelf = msg.self; 
+                const type = msg.type || 'text';
+                
+                if (type === 'sys') {
+                    const div = document.createElement('div');
+                    div.className = 'system-msg';
+                    div.innerText = msg.text;
+                    list.appendChild(div);
+                    return;
+                }
+
+                const row = document.createElement('div');
+                row.className = `message-row ${isSelf ? 'right' : 'left'}`;
+                
+                const avatarUrl = isSelf ? data.user.av : data.other.av;
+                const avatarHtml = `<img class="chat-avatar" src="${avatarUrl}" ondblclick="doPat('${isSelf ? 'me_pat_me' : 'me_pat_other'}')">`;
+                
+                let bubbleContent = '';
+                let shouldType = false;
+
+                if (type === 'img') {
+                    bubbleContent = `<img src="${msg.text}">`;
+                } else {
+                    if (msg.isNew && type === 'text') {
+                        shouldType = true;
+                        bubbleContent = ''; 
+                    } else {
+                        const safeText = msg.text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                        bubbleContent = safeText;
+                    }
+                }
+
+                row.innerHTML = `
+                    ${avatarHtml}
+                    <div class="bubble-container">
+                        <div class="bubble">${bubbleContent}</div>
+                    </div>
+                `;
+                list.appendChild(row);
+
+                if (shouldType) {
+                    const bubble = row.querySelector('.bubble');
+                    const textToType = msg.text;
+                    let i = 0;
+                    
+                    msg.isNew = false;
+                    save(); 
+
+                    function typeWriter() {
+                        if (i < textToType.length) {
+                            bubble.innerText += textToType.charAt(i);
+                            i++;
+                            scrollToBottom();
+                            setTimeout(typeWriter, 50); 
+                        }
+                    }
+                    typeWriter();
+                }
+            });
+            
+            scrollToBottom();
+        }
+
+        function scrollToBottom() {
+            const area = document.getElementById('chat-area');
+            area.scrollTop = area.scrollHeight;
+        }
+
+    </script>
+</body>
+</html>
